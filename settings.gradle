@@ -1,4 +1,4 @@
-rootProject.name = 'really-simple-serialization'
+rootProject.name = 'really-simple-serialisation'
 
 include "rss"
 project(":rss").projectDir = file("impl")
