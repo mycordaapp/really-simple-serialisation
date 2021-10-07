@@ -74,6 +74,7 @@ class ReflectionsSupport {
                 "kotlin.Float" -> 123.0f::class
                 "kotlin.Boolean" -> true::class
                 "kotlin.String" -> ""::class
+                "kotlin.Unit" -> Unit::class
                 else -> Class.forName(clazzName).kotlin
             } as KClass<Any>
         }
@@ -88,16 +89,26 @@ class ReflectionsSupport {
                 "BigDecimal" -> data.toBigDecimal()
                 "String" -> data
                 "UUID" -> UUID.fromString(data)
+                "Unit" -> Unit
                 else -> {
-                    if (isEnum(clazz)){
+                    if (isEnum(clazz)) {
                         val method = clazz.java.getMethod("valueOf", String::class.java)
-                        val enum = method.invoke(null,data)
+                        val enum = method.invoke(null, data)
                         enum
-                       //throw RuntimeException("how to build an enum")
-                    }
-                    else {
+                        //throw RuntimeException("how to build an enum")
+                    } else {
                         throw RuntimeException("don't know what to do with $clazz")
                     }
+                }
+            }
+        }
+
+        fun deserialiseNothing(clazzName: String): Any {
+            return when (clazzName) {
+                "kotlin.Unit" -> Unit as Unit
+                "mycorda.app.types.NotRequired" -> NotRequired.instance()
+                else -> {
+                    throw RuntimeException("don't know what to do with $clazzName")
                 }
             }
         }

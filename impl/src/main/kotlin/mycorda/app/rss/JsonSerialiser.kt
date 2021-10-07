@@ -50,8 +50,11 @@ data class SerialisationPacket(
         }
     }
 
-    private fun all(): List<Any?> = listOf(nothingClazz, scalar, data, list, exception)
+    private fun all(): List<Any?> = listOf(nothing(), scalar, data, list, exception)
     private fun values(): List<Any?> = listOf(scalar, data, list)
+
+    private fun nothing(): Any? =
+        if (isNothing()) ReflectionsSupport.deserialiseNothing(nothingClazz!!.qualifiedName!!) else null
 
     fun isNothing() = nothingClazz != null
     fun nothingClazz() = nothingClazz!!
@@ -130,7 +133,9 @@ class JsonSerialiser {
                 SerialisationPacket.create(exception)
             }
             else -> {
-                throw java.lang.RuntimeException("opps")
+                // only option left is one of the "nothing" types
+                val nothing = ReflectionsSupport.deserialiseNothing(raw.clazzName)
+                SerialisationPacket.create(nothing)
             }
         }
     }
@@ -158,8 +163,11 @@ class JsonSerialiser {
                 val json = mapper.writeValueAsString(packet.exception)
                 SerialisationPacketWireFormat(clazzName = packet.clazzName(), exception = json)
             }
+            packet.nothingClazz != null -> {
+                SerialisationPacketWireFormat(clazzName = packet.clazzName())
+            }
             else -> {
-                throw java.lang.RuntimeException("opps, shouldn't get here")
+                throw java.lang.RuntimeException("Cannot map SerialisationPacket: $packet")
             }
         }
     }

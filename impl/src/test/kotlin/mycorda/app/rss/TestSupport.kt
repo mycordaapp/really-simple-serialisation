@@ -23,4 +23,4 @@ data class DemoModel(
     val nested: DemoModel? = null
 )
 
-class DemoException : RuntimeException()
+class DemoException(message : String) : RuntimeException(message)

@@ -20,6 +20,7 @@ class JsonSerialiserTest {
     @Test
     fun `should round-trip data`() {
         val examples = listOf(
+            // scalars
             Colour.random(),
             random.nextInt(),
             random.nextLong(),
@@ -29,9 +30,19 @@ class JsonSerialiserTest {
             BigDecimal.valueOf(random.nextDouble()),
             String.random(10),
             UUID.randomUUID(),
+
+            // data class
             DemoModel(),
+
+            // list
             StringList(listOf("Mary", "had", "a", "little", "lamb")),
-            RuntimeException("This went wrong")
+
+            // exceptions
+            RuntimeException("This went wrong"),
+            DemoException("opps!"),
+
+            // Nothing
+            // these have ther own tests as the assertions are different
         )
 
         examples.forEach {
@@ -41,8 +52,8 @@ class JsonSerialiserTest {
                     // internal stack trace doesn't serialize exactly, so object equality
                     // fails
                     assertThat(
-                        it.message,
-                        equalTo((roundTripped as Exception).message)
+                        it.message ?: "",
+                        equalTo((roundTripped as Exception).message ?: "")
                     ) { "Failed to round-trip $it of class ${it::class.qualifiedName}" }
                 } else {
                     assertThat(
@@ -51,10 +62,24 @@ class JsonSerialiserTest {
                     ) { "Failed to round-trip $it of class ${it::class.qualifiedName}" }
                 }
             } catch (ex: Exception) {
+                ex.printStackTrace()
                 fail("Exception ${ex.message} for round-trip $it of class ${it::class.qualifiedName}")
             }
         }
     }
+
+    @Test
+    fun `should round-trip Unit`() {
+        val roundTripped = roundTrip(Unit)
+        assert(roundTripped is Unit)
+    }
+
+    @Test
+    fun `should round-trip NotRequired`() {
+        val roundTripped = roundTrip(NotRequired.instance())
+        assert(roundTripped is NotRequired)
+    }
+
 
     @Test
     fun `should map to SerialisationPacket`() {
@@ -77,7 +102,7 @@ class JsonSerialiserTest {
 
             // exceptions
             RuntimeException("This went wrong"),
-            DemoException(),
+            DemoException("opps!"),
 
             // Nothing
             Unit,
