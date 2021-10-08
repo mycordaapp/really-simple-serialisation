@@ -13,9 +13,10 @@ There is nothing wrong with modern Java/Kotlin serialisers technically (in fact 
 * ambiguities over the actual wire format due the use of reflections magic and differing opinions as to the best mapping
   rules. At best these result in minor differences creeping in overtime between versions. At worst there are such
   significant gaps in the formats expected by different clients and libraries that significant development time is
-  expended on one translation layers.
-* no commonly agreed rules for packaging different result types - for example how is a single scalar best represented -
-  or an exception. Most applications layer some convention around the core serialisers to solve these problem.
+  expended on translation layers.
+* no commonly agreed rules for packaging different result types - for example how is a single scalar best represented (
+  its not valid json on its own) - or an exception. Most applications layer some convention around the core serialisers
+  to solve these problem.
 * loss of type data. Java serialiser assume that the Java/Kotlin class is available to reconstruct the data and need the
   schema information derived from the class for this. This has two flaws:
     - it makes changes to wire formats problematic  (see above)
