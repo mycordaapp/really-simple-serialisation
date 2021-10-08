@@ -18,6 +18,23 @@ class JsonSerialiserTest {
     private val random = Random()
 
     @Test
+    fun `should be a simple demo`() {
+        val serialiser = JsonSerialiser()
+        val aUUID = UUID.randomUUID()
+
+        // wire formt
+        val serialised = serialiser.serialiseData(aUUID)
+
+        // a packet that can hold any data type
+        val deserialisedPacket  = serialiser.deserialiseData(serialised)
+
+        // get the actual value from the packet
+        val roundTrippped = deserialisedPacket.value()
+
+        assertThat(roundTrippped, equalTo(aUUID))
+    }
+
+    @Test
     fun `should round-trip data`() {
         val examples = listOf(
             // scalars
