@@ -17,8 +17,8 @@ There is nothing wrong with modern Java/Kotlin serialisers technically (in fact 
 * no commonly agreed rules for packaging different result types - for example how is a single scalar best represented (
   its not valid json on its own) - or an exception. Most applications layer some convention around the core serialisers
   to solve these problem.
-* loss of type data. Java serialiser assume that the Java/Kotlin class is available to reconstruct the data and need the
-  schema information derived from the class for this. This has two flaws:
+improv* loss of type data. Java class serialisers assume that the Java/Kotlin class is available to reconstruct the data and
+  need the schema information derived from the class for this. This has two flaws:
     - it makes changes to wire formats problematic  (see above)
     - supporting non-java clients is harder
 
@@ -28,13 +28,22 @@ RSS makes a number of simplifying assumptions that minimise these problems. They
 
 With RSS serialisation, only the following types are supported
 
-* a restricted set of pre agreed scalars
+* a restricted set of pre agreed scalars, currently
+    - Int
+    - Long
+    - Double
+    - String
+    - Float
+    - Boolean
+    - UUID
+    - BigDecimal
 * kotlin data classes
 * type safe list - *raw generic (e.g. List<String>) are banned to avoid problems with erasures*
 * exceptions
-* a handful of classes that represent "nothing" e.g. Unit
+* a handful of classes that represent "nothing" e.g. Unit, NotRequired
 
-Anything else will result in an exception when running the serialisation
+Anything else should result in an exception when running the serialisation(_currently this validation is only partly
+supported_)
 
 Initially there is a small subset of scalar types, but the intent is to include all the commonly used java domain types.
 
