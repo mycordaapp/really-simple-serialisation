@@ -4,6 +4,8 @@ import mycorda.app.tasks.serialisation.ReflectionsSupport
 import mycorda.app.types.NotRequired
 import java.lang.Exception
 import kotlin.reflect.KClass
+import kotlin.reflect.KVisibility
+import kotlin.reflect.full.memberProperties
 
 /**
  * Represents what can be passed. Only one of the 5 options
@@ -79,12 +81,28 @@ data class SerialisationPacket(
 
             if (ReflectionsSupport.isRawList(clazz)) throw RuntimeException("Raw List classes are not allowed. Must use a subclass")
             if (ReflectionsSupport.isScalar(clazz)) return SerialisationPacket(scalar = data)
-            if (ReflectionsSupport.isDataClass(clazz)) return SerialisationPacket(data = data)
+            if (ReflectionsSupport.isDataClass(clazz)) {
+                if (!checkDataClazzMembers(data, clazz)) {
+                    throw RuntimeException("$data has one more unsupported types")
+                }
+                return SerialisationPacket(data = data)
+            }
             if (ReflectionsSupport.isListSubclass(clazz)) return SerialisationPacket(list = data)
             if (ReflectionsSupport.isException(clazz)) return SerialisationPacket(exception = data as Exception)
             if (ReflectionsSupport.isEnum(clazz)) return SerialisationPacket(scalar = data)
 
             throw RuntimeException("Don't know how to serialise class: ${data::class.qualifiedName}")
+        }
+
+        private fun checkDataClazzMembers(instance: Any, clazz: KClass<out Any>): Boolean {
+            var ok = true
+            clazz.memberProperties.forEach {
+                if ((it.visibility == KVisibility.PUBLIC) && ok) {
+                    val data = it.getter.call(instance)
+                    ok = (data == null) || ReflectionsSupport.isSupportedType(data::class)
+                }
+            }
+            return ok
         }
     }
 }

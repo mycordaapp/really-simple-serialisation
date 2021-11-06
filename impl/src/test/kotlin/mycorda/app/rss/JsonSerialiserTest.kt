@@ -26,7 +26,7 @@ class JsonSerialiserTest {
         val serialised = serialiser.serialiseData(aUUID)
 
         // a packet that can hold any data type
-        val deserialisedPacket  = serialiser.deserialiseData(serialised)
+        val deserialisedPacket = serialiser.deserialiseData(serialised)
 
         // get the actual value from the packet
         val roundTrippped = deserialisedPacket.value()
@@ -95,6 +95,15 @@ class JsonSerialiserTest {
     fun `should round-trip NotRequired`() {
         val roundTripped = roundTrip(NotRequired.instance())
         assert(roundTripped is NotRequired)
+    }
+
+    @Test
+    fun `should not serialize unsupported types`() {
+        try {
+            serialiser.serialiseData(BadModel())
+            fail("should have thrown an exception")
+        } catch (ex: Exception) {
+        }
     }
 
 

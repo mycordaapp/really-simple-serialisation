@@ -23,7 +23,6 @@ class ReflectionsSupport {
                     || (clazz == String::class)
                     || (clazz == UUID::class)
                     || (clazz == BigDecimal::class)
-
         }
 
         fun isEnum(type: KClass<out Any>) = type.isSubclassOf(Enum::class)
@@ -48,6 +47,15 @@ class ReflectionsSupport {
 
         fun isListSubclass(clazz: KClass<*>): Boolean {
             return (clazz.isSubclassOf(List::class))
+        }
+
+        fun isSupportedType(clazz: KClass<*>): Boolean {
+            return isScalar(clazz) ||
+                    isEnum(clazz) ||
+                    isNotRequired(clazz) ||
+                    isDataClass(clazz) ||
+                    isException(clazz) ||
+                    isListSubclass(clazz)
         }
 
 //        fun isMap(clazz: KClass<*>): Boolean {
