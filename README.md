@@ -7,8 +7,8 @@ Alternatively, '**yafs**' - "yet another !@#$%^&* serialiser".
 
 ## Why RSS?
 
-There is nothing wrong with modern Java/Kotlin serialisers technically (in fact rss embeds
-[Jackson](https://github.com/FasterXML/jackson)), but at scale they have some annoying problems, including:
+There is absolutely nothing wrong with modern Java/Kotlin serialisers technically (in fact rss embeds
+[Jackson](https://github.com/FasterXML/jackson)), but at scale they have some annoying problems. These include:
 
 * ambiguities over the actual wire format due the use of reflections magic and differing opinions as to the best mapping
   rules. At best these result in minor differences creeping in overtime between versions. At worst there are such
@@ -17,16 +17,17 @@ There is nothing wrong with modern Java/Kotlin serialisers technically (in fact 
 * no commonly agreed rules for packaging different result types - for example how is a single scalar best represented (
   its not valid json on its own) - or an exception. Most applications layer some convention around the core serialisers
   to solve these problem.
-improv* loss of type data. Java class serialisers assume that the Java/Kotlin class is available to reconstruct the data and
-  need the schema information derived from the class for this. This has two flaws:
-    - it makes changes to wire formats problematic  (see above)
+* loss of type data. Java class serialisers assume that the Java/Kotlin class is available to reconstruct the data and
+  need the schema information derived from the class for this. This has some weaknesses:
+    - supporting generics due to erasures
     - supporting non-java clients is harder
+    - it makes changes to wire formats problematic  (see above)
 
-RSS makes a number of simplifying assumptions that minimise these problems. They are
+RSS makes a number of simplifying assumptions that minimise these problems.
 
 ### 1 - Restricted set of types
 
-With RSS serialisation, only the following types are supported
+With RSS serialisation, only the following types are supported:
 
 * a restricted set of pre agreed scalars, currently
     - Int
@@ -85,9 +86,9 @@ data class SerialisationPacket(
 
 ### 3 - Including type data in the wire format
 
-There is a specified wire format `SerialisationPacketWireFormat` and this allows for meta data to be passed back to the
-client. Currently only kotlin clients are supported and this meta data is simple, however the longer term intention is
-to include richer type data (possibly Swagger) to support non Java clients.
+There is a specified wire format `SerialisationPacketWireFormat` and this allows for meta-data to be passed back to the
+client. Currently only kotlin clients are supported and this meta-data is simple, however the longer term intention is
+to include richer type data (for example Swagger and GraphQL schema) to more easily support other types of clients.
 
 ### 3 - Round tripping
 
