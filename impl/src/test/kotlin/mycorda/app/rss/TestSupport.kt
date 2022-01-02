@@ -10,9 +10,30 @@ enum class Colour {
     Red, Green, Blue;
 
     companion object {
-        fun random(): Colour = Colour.values()[Random().nextInt(2)]
+        fun random(): Colour = values()[Random().nextInt(2)]
     }
 }
+
+enum class Weapon(val weaponName: String, val damage: Int) {
+    Sword("Sword", 12),
+    Axe("Axe", 13),
+    Bow("Bow", 14);
+
+    companion object {
+        fun random(): Weapon = values()[Random().nextInt(2)]
+    }
+}
+
+enum class BadEnum(val enumName: String, val bad: BadModel = BadModel()) {
+    One("One"),
+    Two("Two"),
+    Three("Three");
+
+    companion object {
+        fun random(): BadEnum = values()[Random().nextInt(2)]
+    }
+}
+
 
 class DemoException(message: String) : RuntimeException(message) {
     override fun equals(other: Any?): Boolean {
@@ -42,5 +63,5 @@ data class DemoModel(
 )
 
 // not serializable
-data class BadModel(val file: File = File(".") )
+data class BadModel(val file: File = File("."))
 

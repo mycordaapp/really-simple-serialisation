@@ -7,6 +7,8 @@ import mycorda.app.types.NotRequired
 import mycorda.app.types.StringList
 import org.junit.jupiter.api.Assertions.fail
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertDoesNotThrow
+import org.junit.jupiter.api.assertThrows
 import java.lang.Exception
 import java.lang.RuntimeException
 import java.math.BigDecimal
@@ -39,6 +41,7 @@ class JsonSerialiserTest {
         val examples = listOf(
             // scalars
             Colour.random(),
+            Weapon.random(),
             random.nextInt(),
             random.nextLong(),
             random.nextDouble(),
@@ -99,11 +102,8 @@ class JsonSerialiserTest {
 
     @Test
     fun `should not serialize unsupported types`() {
-        try {
-            serialiser.serialiseData(BadModel())
-            fail("should have thrown an exception")
-        } catch (ex: Exception) {
-        }
+        assertThrows<RuntimeException> {serialiser.serialiseData(BadModel())}
+        assertThrows<RuntimeException> {serialiser.serialiseData(BadEnum.random())}
     }
 
 
@@ -111,6 +111,8 @@ class JsonSerialiserTest {
     fun `should map to SerialisationPacket`() {
         val examples = listOf(
             // scalars
+            Colour.random(),
+            Weapon.random(),
             random.nextInt(),
             random.nextLong(),
             random.nextDouble(),

@@ -113,7 +113,7 @@ class ReflectionsSupport {
 
         fun deserialiseNothing(clazzName: String): Any {
             return when (clazzName) {
-                "kotlin.Unit" -> Unit as Unit
+                "kotlin.Unit" -> Unit
                 "mycorda.app.types.NotRequired" -> NotRequired.instance()
                 else -> {
                     throw RuntimeException("don't know what to do with $clazzName")

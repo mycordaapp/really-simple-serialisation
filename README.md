@@ -39,6 +39,7 @@ With RSS serialisation, only the following types are supported:
     - UUID
     - BigDecimal
 * kotlin data classes
+* enumerations   
 * type safe list - *raw generic (e.g. List<String>) are banned to avoid problems with erasures*
 * exceptions
 * a handful of classes that represent "nothing" e.g. Unit, NotRequired

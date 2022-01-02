@@ -82,24 +82,35 @@ data class SerialisationPacket(
             if (ReflectionsSupport.isRawList(clazz)) throw RuntimeException("Raw List classes are not allowed. Must use a subclass")
             if (ReflectionsSupport.isScalar(clazz)) return SerialisationPacket(scalar = data)
             if (ReflectionsSupport.isDataClass(clazz)) {
-                if (!checkDataClazzMembers(data, clazz)) {
+                if (!checkClazzMembers(data, clazz)) {
                     throw RuntimeException("$data has one more unsupported types")
                 }
                 return SerialisationPacket(data = data)
             }
             if (ReflectionsSupport.isListSubclass(clazz)) return SerialisationPacket(list = data)
             if (ReflectionsSupport.isException(clazz)) return SerialisationPacket(exception = data as Exception)
-            if (ReflectionsSupport.isEnum(clazz)) return SerialisationPacket(scalar = data)
+            if (ReflectionsSupport.isEnum(clazz)) {
+                if (!checkClazzMembers(data, clazz)) {
+                    throw RuntimeException("$data has one more unsupported types")
+                }
+                return SerialisationPacket(scalar = data)
+            }
 
             throw RuntimeException("Don't know how to serialise class: ${data::class.qualifiedName}")
         }
 
-        private fun checkDataClazzMembers(instance: Any, clazz: KClass<out Any>): Boolean {
+        private fun checkClazzMembers(instance: Any, clazz: KClass<out Any>): Boolean {
             var ok = true
             clazz.memberProperties.forEach {
                 if ((it.visibility == KVisibility.PUBLIC) && ok) {
                     val data = it.getter.call(instance)
-                    ok = (data == null) || ReflectionsSupport.isSupportedType(data::class)
+                    ok = data == null
+                    data?.let {
+                        ok = ReflectionsSupport.isSupportedType(data::class)
+                        if (ReflectionsSupport.isDataClass(data::class)) {
+                            ok = ok && checkClazzMembers(data, data::class)
+                        }
+                    }
                 }
             }
             return ok
