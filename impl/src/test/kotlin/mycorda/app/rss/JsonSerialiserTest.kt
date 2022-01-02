@@ -55,7 +55,7 @@ class JsonSerialiserTest {
             DemoModel(),
 
             // MapofAny
-            mapOf("id" to String.random(10)),
+            mapOf("name" to "bob", "age" to random.nextInt(99)),
 
             // list
             StringList(listOf("Mary", "had", "a", "little", "lamb")),
@@ -129,7 +129,7 @@ class JsonSerialiserTest {
             DemoModel(),
 
             // MapofAny
-            mapOf("id" to String.random(10)),
+            mapOf("name" to "bob", "age" to random.nextInt(99)),
 
             // list
             StringList(listOf("Mary", "had", "a", "little", "lamb")),
@@ -176,7 +176,6 @@ class JsonSerialiserTest {
 
     private fun roundTrip(data: Any): Any {
         val serialised = serialiser.serialiseData(data)
-        println(serialised)
         return serialiser.deserialiseData(serialised).any()
     }
 }

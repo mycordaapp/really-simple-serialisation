@@ -1,9 +1,7 @@
 package mycorda.app.rss
 
 import mycorda.app.helpers.random
-import mycorda.app.types.MapOfAny
-import mycorda.app.types.StringList
-import mycorda.app.types.toMapOfAny
+import mycorda.app.types.*
 import java.io.File
 import java.lang.RuntimeException
 import java.util.*
@@ -67,13 +65,6 @@ data class DemoModel(
 // not serializable
 data class BadModel(val file: File = File("."))
 
-interface ToMapOfAny {
-    fun toMap(): MapOfAny
-}
-
-interface FromMapOfAny<T> {
-    fun fromMap(data: MapOfAny): T
-}
 
 class MapModel(private val name: String) : ToMapOfAny {
 
