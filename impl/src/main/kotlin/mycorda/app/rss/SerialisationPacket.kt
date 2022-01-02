@@ -10,7 +10,7 @@ import kotlin.reflect.KVisibility
 import kotlin.reflect.full.memberProperties
 
 /**
- * Represents what can be passed. Only one of the 5 options
+ * Represents what can be passed. Only one of the 6 options
  * can be filled in
  */
 data class SerialisationPacket(

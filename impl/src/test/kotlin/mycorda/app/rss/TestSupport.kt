@@ -89,3 +89,13 @@ class MapModel(private val name: String) : ToMapOfAny {
     }
 }
 
+
+
+
+//open class CustomError(): Error
+//
+//sealed class Colour()
+//
+//sealed class IOError(): Colour
+//
+
