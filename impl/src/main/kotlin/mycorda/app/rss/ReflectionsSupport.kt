@@ -45,6 +45,10 @@ class ReflectionsSupport {
             return (clazz.isSubclassOf(Exception::class))
         }
 
+        fun isRawMap(clazz: KClass<*>): Boolean {
+            return (clazz.isSubclassOf(Map::class))
+        }
+
         fun isListSubclass(clazz: KClass<*>): Boolean {
             return (clazz.isSubclassOf(List::class))
         }

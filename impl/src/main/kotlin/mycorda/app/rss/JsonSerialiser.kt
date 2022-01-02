@@ -25,6 +25,10 @@ class JsonSerialiser {
                 val data = mapper.readValue(raw.data, clazz.java)
                 SerialisationPacket.create(data)
             }
+            raw.map != null -> {
+                val data = mapper.readValue(raw.map, clazz.java)
+                SerialisationPacket.create(data)
+            }
             raw.list != null -> {
                 val list = mapper.readValue(raw.list, clazz.java)
                 SerialisationPacket.create(list)
@@ -55,6 +59,10 @@ class JsonSerialiser {
             packet.data != null -> {
                 val json = mapper.writeValueAsString(packet.data)
                 SerialisationPacketWireFormat(clazzName = packet.clazzName(), data = json)
+            }
+            packet.map != null -> {
+                val json = mapper.writeValueAsString(packet.map)
+                SerialisationPacketWireFormat(clazzName = packet.clazzName(), map = json)
             }
             packet.list != null -> {
                 val json = mapper.writeValueAsString(packet.list)

@@ -1,7 +1,9 @@
 package mycorda.app.rss
 
 import mycorda.app.tasks.serialisation.ReflectionsSupport
+import mycorda.app.types.MapOfAny
 import mycorda.app.types.NotRequired
+import mycorda.app.types.toMapOfAny
 import java.lang.Exception
 import kotlin.reflect.KClass
 import kotlin.reflect.KVisibility
@@ -28,6 +30,11 @@ data class SerialisationPacket(
     val data: Any? = null,
 
     /**
+     * A generic MapofAny
+     */
+    val map: MapOfAny? = null,
+
+    /**
      * A list, but CANNOT be a raw list, i.e. List<String> to
      * avoid problems with erasures in generic
      */
@@ -50,8 +57,8 @@ data class SerialisationPacket(
         }
     }
 
-    private fun all(): List<Any?> = listOf(nothing(), scalar, data, list, exception)
-    private fun values(): List<Any?> = listOf(scalar, data, list)
+    private fun all(): List<Any?> = listOf(nothing(), scalar, data, map, list, exception)
+    private fun values(): List<Any?> = listOf(scalar, data, map, list)
 
     private fun nothing(): Any? =
         if (isNothing()) ReflectionsSupport.deserialiseNothing(nothingClazz!!.qualifiedName!!) else null
@@ -86,6 +93,16 @@ data class SerialisationPacket(
                     throw RuntimeException("$data has one more unsupported types")
                 }
                 return SerialisationPacket(data = data)
+            }
+            if (ReflectionsSupport.isRawMap(clazz)) {
+                val map = data as Map<*, *>
+                try {
+                    val hashMap = LinkedHashMap(map) // force a consistent map implementation for the wire format
+                    val mapOfAny = hashMap.toMapOfAny()
+                    return SerialisationPacket(map = mapOfAny)
+                } catch (ex: Exception) {
+                    throw RuntimeException("Raw maps must conform to the rules of for MapofAny")
+                }
             }
             if (ReflectionsSupport.isListSubclass(clazz)) return SerialisationPacket(list = data)
             if (ReflectionsSupport.isException(clazz)) return SerialisationPacket(exception = data as Exception)

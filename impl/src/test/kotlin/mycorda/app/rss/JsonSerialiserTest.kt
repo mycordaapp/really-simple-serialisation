@@ -54,6 +54,9 @@ class JsonSerialiserTest {
             // data class
             DemoModel(),
 
+            // MapofAny
+            mapOf("id" to String.random(10)),
+
             // list
             StringList(listOf("Mary", "had", "a", "little", "lamb")),
 
@@ -102,8 +105,8 @@ class JsonSerialiserTest {
 
     @Test
     fun `should not serialize unsupported types`() {
-        assertThrows<RuntimeException> {serialiser.serialiseData(BadModel())}
-        assertThrows<RuntimeException> {serialiser.serialiseData(BadEnum.random())}
+        assertThrows<RuntimeException> { serialiser.serialiseData(BadModel()) }
+        assertThrows<RuntimeException> { serialiser.serialiseData(BadEnum.random()) }
     }
 
 
@@ -124,6 +127,9 @@ class JsonSerialiserTest {
 
             // data class
             DemoModel(),
+
+            // MapofAny
+            mapOf("id" to String.random(10)),
 
             // list
             StringList(listOf("Mary", "had", "a", "little", "lamb")),
@@ -152,8 +158,8 @@ class JsonSerialiserTest {
             Pair(ArrayList<String>(), "Raw List classes are not allowed. Must use a subclass"),
             Pair(Date(), "Don't know how to serialise class: java.util.Date"),
             Pair(
-                mapOf<String, Any>("name" to "Paul"),
-                "Don't know how to serialise class: java.util.Collections.SingletonMap"
+                mapOf<Any, Any>(UUID.randomUUID() to "id"),
+                "Raw maps must conform to the rules of for MapofAny"
             )
         )
 
@@ -170,6 +176,7 @@ class JsonSerialiserTest {
 
     private fun roundTrip(data: Any): Any {
         val serialised = serialiser.serialiseData(data)
+        println(serialised)
         return serialiser.deserialiseData(serialised).any()
     }
 }
