@@ -5,6 +5,7 @@ import com.natpryce.hamkrest.equalTo
 import mycorda.app.helpers.random
 import mycorda.app.types.NotRequired
 import mycorda.app.types.StringList
+import mycorda.app.types.UniqueId
 import org.junit.jupiter.api.Assertions.fail
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
@@ -50,6 +51,7 @@ class JsonSerialiserTest {
             BigDecimal.valueOf(random.nextDouble()),
             String.random(10),
             UUID.randomUUID(),
+            UniqueId.randomUUID(),
 
             // data class
             DemoModel(),
@@ -59,6 +61,8 @@ class JsonSerialiserTest {
 
             // list
             StringList(listOf("Mary", "had", "a", "little", "lamb")),
+            ImmutableStringList(listOf("foo","bar")),
+
 
             // exceptions
             RuntimeException("This went wrong"),
@@ -131,8 +135,9 @@ class JsonSerialiserTest {
             // MapofAny
             mapOf("name" to "bob", "age" to random.nextInt(99)),
 
-            // list
+            // lists
             StringList(listOf("Mary", "had", "a", "little", "lamb")),
+            ImmutableStringList(listOf("foo","bar")),
 
             // exceptions
             RuntimeException("This went wrong"),

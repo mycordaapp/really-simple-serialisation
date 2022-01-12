@@ -58,12 +58,15 @@ data class DemoModel(
     val colour: Colour = Colour.random(),
     //val notRequired : NotRequired = NotRequired.instance(), // need to fix equality on NotRequired for tests to pass
     val stringList: StringList = StringList(listOf(String.random(), String.random(), String.random())),
+    val immutableStringList: ImmutableStringList = ImmutableStringList(listOf("foo", "bar")),
     val exception: DemoException = DemoException("oops"),
     val nested: DemoModel? = null
 )
 
 // not serializable
 data class BadModel(val file: File = File("."))
+
+class ImmutableStringList(items: List<String>) : SimpleImmutableList<String>(items)
 
 
 class MapModel(private val name: String) : ToMapOfAny {
@@ -88,8 +91,6 @@ class MapModel(private val name: String) : ToMapOfAny {
         return name.hashCode()
     }
 }
-
-
 
 
 //open class CustomError(): Error

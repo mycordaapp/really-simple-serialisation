@@ -1,6 +1,7 @@
 package mycorda.app.tasks.serialisation;
 
 import mycorda.app.types.NotRequired
+import mycorda.app.types.UniqueId
 import java.math.BigDecimal
 import java.util.*
 import kotlin.reflect.KClass
@@ -13,6 +14,7 @@ import kotlin.reflect.full.isSubclassOf
 class ReflectionsSupport {
 
     companion object {
+        // the allowed scalar values
         fun isScalar(clazz: KClass<*>): Boolean {
             return (clazz == Int::class)
                     || (clazz == Long::class)
@@ -22,6 +24,7 @@ class ReflectionsSupport {
                     || (clazz == Boolean::class)
                     || (clazz == String::class)
                     || (clazz == UUID::class)
+                    || (clazz == UniqueId::class)
                     || (clazz == BigDecimal::class)
         }
 
@@ -101,6 +104,7 @@ class ReflectionsSupport {
                 "BigDecimal" -> data.toBigDecimal()
                 "String" -> data
                 "UUID" -> UUID.fromString(data)
+                "UniqueId" -> UniqueId.fromString(data)
                 "Unit" -> Unit
                 else -> {
                     if (isEnum(clazz)) {
